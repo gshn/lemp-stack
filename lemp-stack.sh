@@ -66,8 +66,8 @@ sed -i 's/;emergency_restart_interval = 0/emergency_restart_interval = 1m/' /etc
 service php7.2-fpm restart
 
 ## mariadb 설치
-debconf-set-selections <<< 'mariadb-server-10.2 mysql-server/root_password password ${DBROOTPASS}'
-debconf-set-selections <<< 'mariadb-server-10.2 mysql-server/root_password_again password ${DBROOTPASS}'
+debconf-set-selections <<< "mariadb-server-10.2 mysql-server/root_password password ${DBROOTPASS}"
+debconf-set-selections <<< "mariadb-server-10.2 mysql-server/root_password_again password ${DBROOTPASS}"
 apt-get -y install mariadb-server-10.2 mariadb-client-10.2
 apt-get -y install php7.2-mysql
 
