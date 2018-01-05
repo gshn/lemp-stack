@@ -10,15 +10,14 @@ USERPW="1231"
 DOCUMENT_ROOT="/home/${USERID}/app/public"
 
 ## 타임존, 언어셋, 호스트네임, 저장소수정 패키지 업데이트
+locale-gen ko_KR.UTF-8
 echo "Asia/Seoul" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
-
-locale-gen ko_KR.UTF-8
 
 echo $HOSTNAME > /etc/hostname
 hostname -F /etc/hostname
 
-sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost ${DOMAIN}/' /etc/hosts
+sed -i "s/127.0.0.1 localhost/127.0.0.1 localhost ${DOMAIN}/" /etc/hosts
 
 sed -i 's/kr.archive.ubuntu.com/ftp.daumkakao.com/g' /etc/apt/sources.list
 
