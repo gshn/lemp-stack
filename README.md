@@ -11,6 +11,7 @@ git clone https://github.com/gshn/lemp-stack
 cd lemp-stack
 vim lemp-stack.sh
 ```
+
 - HOSTNAME="hostname"
 > 해당 OS의 호스트을 기입하시면 됩니다. 대체로 실 도메인을 사용합니다.
 
