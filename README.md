@@ -1,13 +1,16 @@
 # lemp-stack
 
-# 설치법
-## 1. git clone으로 소스 다운로드
+## 설치법
+### 1. git clone으로 소스 다운로드
 ```bash
 git clone https://github.com/gshn/lemp-stack
 ```
 
-## 2. 환경변수 설정
-
+### 2. 환경변수 설정
+```bash
+cd lemp-stack
+vim lemp-stack.sh
+```
 - HOSTNAME="hostname"
 > 해당 OS의 호스트을 기입하시면 됩니다. 대체로 실 도메인을 사용합니다.
 
@@ -35,12 +38,7 @@ git clone https://github.com/gshn/lemp-stack
 - DOCUMENT_ROOT="/home/${USERID}/app/public"
 > 호스팅 DOCUMENT_ROOT 디렉터리 뒤에 app/public 만 필요한대로 수정해주세요.
 
-```bash
-cd lemp-stack
-vim lemp-stack.sh
-```
-
-## 3. 실행권한 변경 및 실행
+### 3. 실행권한 변경 및 실행
 ```bash
 chmod 700 lemp-stack.sh
 ./lemp-stack.sh
