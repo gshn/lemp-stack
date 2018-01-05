@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-HOSTNAME="lillycover"
-DOMAIN="lillycover.com"
-DBROOTPASS="1231"
+HOSTNAME="hostname"
+DOMAIN="domain.com"
+DBROOTPASS="dbrootpass"
 PHPMYADMIN_VERSION="4.7.7"
 PHPMYADMIN_BLOWFISH=")Aje8s~9VE|JyV8s7MF0Zw|DReayVcpU^"
 PHPMYADMIN_DIRECTORY="phpMyAdmin"
-USERID="lillycover"
-USERPW="1231"
+USERID="userid"
+USERPW="userpw"
 DOCUMENT_ROOT="/home/${USERID}/app/public"
 
 ## 타임존, 언어셋, 호스트네임, 저장소수정 패키지 업데이트
