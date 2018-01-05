@@ -9,6 +9,7 @@ USERID="lillycover"
 USERPW="1231"
 DOCUMENT_ROOT="/home/${USERID}/app/public"
 
+## 타임존, 언어셋, 호스트네임, 저장소수정 패키지 업데이트
 echo "Asia/Seoul" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 
@@ -21,6 +22,25 @@ sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost ${DOMAIN}/' /etc/hosts
 
 sed -i 's/kr.archive.ubuntu.com/ftp.daumkakao.com/g' /etc/apt/sources.list
 
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+apt -y autoremove
+
+## sendmail, vsftpd, unzip 설치
+apt-get -y install sendmail
+echo "localhost" > /etc/mail/local-host-names
+
+apt-get -y install vsftpd
+
+sed -i 's/#write_enable=YES/write_enable=YES/' /etc/vsftpd.conf
+sed -i 's/#local_umask=022/local_umask=022/' /etc/vsftpd.conf
+
+service vsftpd restart
+
+apt-get -y install unzip
+
+## nginx, mariadb, php 저장소 추가
 echo "# Nginx" >> /etc/apt/sources.list
 echo "deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx" >> /etc/apt/sources.list
 echo "deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx" >> /etc/apt/sources.list
@@ -34,24 +54,7 @@ rm nginx_signing.key
 apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
 
 add-apt-repository -y ppa:ondrej/php
-
-export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-apt -y autoremove
-
-apt-get -y install sendmail
-echo "localhost" > /etc/mail/local-host-names
-
-apt-get -y install vsftpd
-
-sed -i 's/#write_enable=YES/write_enable=YES/' /etc/vsftpd.conf
-sed -i 's/#local_umask=022/local_umask=022/' /etc/vsftpd.conf
-
-service vsftpd restart
-
-apt-get -y install unzip
-
 
 ## nginx 설치
 apt-get -y install nginx
