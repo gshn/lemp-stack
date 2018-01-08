@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-HOSTNAME="hostname"
 DOMAIN="domain.com"
 DBROOTPASS="dbrootpass"
 PHPMYADMIN_VERSION="4.7.7"
@@ -8,14 +7,12 @@ PHPMYADMIN_DIRECTORY="phpMyAdmin"
 USERID="userid"
 USERPW="userpw"
 DOCUMENT_ROOT="/home/${USERID}/app/public"
+EMAIL="userid@domain.com"
 
 ## 타임존, 언어셋, 호스트네임, 저장소수정 패키지 업데이트
 locale-gen ko_KR.UTF-8
 echo "Asia/Seoul" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
-
-echo $HOSTNAME > /etc/hostname
-hostname -F /etc/hostname
 
 sed -i "s/127.0.0.1 localhost/127.0.0.1 localhost ${DOMAIN}/" /etc/hosts
 
@@ -103,9 +100,9 @@ apt-get -y install php7.2-memcached
 
 
 ## nginx 기본 설정 변경
-cat ~/lemp-stack/nginx/nginx.conf > /etc/nginx/nginx.conf
-cat ~/lemp-stack/nginx/default.conf > /etc/nginx/conf.d/default.conf
-cat ~/lemp-stack/nginx/fastcgi_params > /etc/nginx/fastcgi_params
+cat ~/server-manage/nginx/nginx.conf > /etc/nginx/nginx.conf
+cat ~/server-manage/nginx/default.conf > /etc/nginx/conf.d/default.conf
+cat ~/server-manage/nginx/fastcgi_params > /etc/nginx/fastcgi_params
 service nginx restart
 
 ## phpmyadmin 설치
@@ -242,3 +239,118 @@ COLLATE utf8mb4_unicode_ci;"
 mysql -uroot -p$DBROOTPASS -e "CREATE USER '${USERID}'@'localhost' IDENTIFIED BY '${USERPW}'"
 mysql -uroot -p$DBROOTPASS -e "GRANT USAGE ON *.* TO '${USERID}'@'localhost' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0"
 mysql -uroot -p$DBROOTPASS -e "GRANT ALL PRIVILEGES ON ${USERID}.* TO '${USERID}'@'localhost'"
+
+
+## SSL TLS HTTP2 인증서 설치
+apt-get install -y letsencrypt
+letsencrypt certonly --agree-tos --email $EMAIL --webroot --webroot-path=$DOCUMENT_ROOT -d $DOMAIN
+openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+
+echo "server {
+    listen       80;
+    server_name  ${DOMAIN};
+
+    return       301 https://${DOMAIN}\$request_uri;
+}
+
+server {
+    listen       443 ssl http2;
+    server_name  ${DOMAIN};
+    root   ${DOCUMENT_ROOT};
+
+    access_log /home/${USERID}/log/access.log;
+    error_log  /home/${USERID}/log/error.log warn;
+
+    ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+    # Enable HSTS. This forces SSL on clients that respect it, most modern browsers. The includeSubDomains flag is optional.
+    add_header Strict-Transport-Security 'max-age=63072000';
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection '1; mode=block';
+
+    # Set caches, protocols, and accepted ciphers. This config will merit an A+ SSL Labs score.
+    ssl_session_cache shared:SSL:20m;
+    ssl_session_timeout 10m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers 'ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5';
+
+    location / {
+        index  index.php index.html;
+        try_files \$uri \$uri/ /index.php?\$args;
+    }
+
+    # Allow Lets Encrypt Domain Validation Program
+    location ^~ /.well-known/acme-challenge/ {
+        allow all;
+    }
+
+    # Block dot file (.htaccess .htpasswd .svn .git .env and so on.)
+    location ~ /\. {
+        deny all;
+    }
+
+    # Block (log file, binary, certificate, shell script, sql dump file) access.
+    location ~* \.(log|binary|pem|enc|crt|conf|cnf|sql|sh|key)$ {
+        deny all;
+    }
+
+    # Block access
+    location ~* (composer\.json|contributing\.md|license\.txt|readme\.rst|readme\.md|readme\.txt|copyright|artisan|gulpfile\.js|package\.json|phpunit\.xml)$ {
+        deny all;
+    }
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        log_not_found off;
+        access_log off;
+    }
+
+    # cache expires 1 year
+    location ~ [^/]\.(css|js|gif|png|jpg|jpeg|eot|svg|ttf|woff|woff2|otf)(/|$) {
+        access_log off;
+        add_header Cache-Control must-revalidate;
+        expires 1y;
+        etag on;
+    }
+
+    # Block .php file inside upload folder. uploads(wp), files(drupal, xe), data(gnuboard).
+    location ~* /(?:uploads|files|data|upload)/.*\.php$ {
+        deny all;
+    }
+
+    # Add PHP handler
+    location ~ [^/]\.php(/|$) {
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        fastcgi_pass unix:/run/php/${USERID}.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+    }
+}
+" > /etc/nginx/conf.d/$USERID.conf
+service nginx restart
+
+## 인증서 자동 갱신
+echo -e "10 5 * * 1 /usr/bin/letsencrypt renew >> /var/log/le-renew.log\n15 5 * * 1 /usr/sbin/service nginx reload" | crontab
+
+## 자동 백업 매일 2회 10일치 저장
+mkdir /backup
+chmod 700 /backup
+cd ~
+echo "#!/bin/bash
+tar -czpf /backup/${USERID}.`date +%Y%m%d%H%M%S`.tgz /home/${USERID} 1>/dev/null 2>/dev/null
+mysqldump --extended-insert=FALSE -u${USERID} -p${USERPW} ${USERID} > /backup/${USERID}.`date +%Y%m%d%H%M%S`.sql
+find /backup/ -type f -mtime +10 | sort | xargs rm -f
+" > backup.sh
+chmod 700 backup.sh
+echo -e "0 6 * * * /root/backup.sh 1>/dev/null 2>/dev/null\n0 18 * * * /root/backup.sh 1>/dev/null 2>/dev/null" | crontab
+
+# 모든 기능 설치 후 재부팅
+reboot
