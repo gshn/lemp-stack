@@ -16,12 +16,13 @@
 
 ### 1. git clone으로 소스 다운로드
 ```bash
-git clone http://hheo@git.czm.kr:9000/Cozmo/server-manage
+git clone https://github.com/gshn/lemp-stack
 ```
 
 ### 2. 환경변수 설정
 ```bash
-cd server-manage
+cd lemp-stack
+locale-gen ko_KR.UTF-8
 vim lemp-stack.sh
 ```
 
