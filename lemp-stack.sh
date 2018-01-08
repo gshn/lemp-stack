@@ -120,6 +120,7 @@ adduser --disabled-password --gecos "" $USERID
 echo "${USERID}:${USERPW}" | chpasswd
 su -c "mkdir -p ${DOCUMENT_ROOT}" $USERID
 su -c 'mkdir ~/log' $USERID
+su -c "echo 'success' > ${DOCUMENT_ROOT}/index.php" $USERID
 
 ## 사용자 php 설정
 echo "[${USERID}]
