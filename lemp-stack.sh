@@ -100,9 +100,9 @@ apt-get -y install php7.2-memcached
 
 
 ## nginx 기본 설정 변경
-cat ~/server-manage/nginx/nginx.conf > /etc/nginx/nginx.conf
-cat ~/server-manage/nginx/default.conf > /etc/nginx/conf.d/default.conf
-cat ~/server-manage/nginx/fastcgi_params > /etc/nginx/fastcgi_params
+cat ~/lemp-stack/nginx/nginx.conf > /etc/nginx/nginx.conf
+cat ~/lemp-stack/nginx/default.conf > /etc/nginx/conf.d/default.conf
+cat ~/lemp-stack/nginx/fastcgi_params > /etc/nginx/fastcgi_params
 service nginx restart
 
 ## phpmyadmin 설치
