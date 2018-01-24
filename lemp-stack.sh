@@ -145,15 +145,16 @@ events {
     worker_connections  1024;
 }
 
-### Nginx 버전 표기 ###
-server_tokens off;
-
-### 보안 적용 ###
-add_header X-Frame-Options SAMEORIGIN;
-add_header X-Content-Type-Options nosniff;
-add_header X-XSS-Protection '1;mode=block';
-
 http {
+    ### Nginx 버전 표기 ###
+    server_tokens off;
+
+    ### 보안 적용 ###
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection '1;mode=block';
+
+    ### global ###
     include       /etc/nginx/mime.types;
     default_type  application/octet-stream;
     access_log off;
@@ -280,7 +281,7 @@ echo "server {
     server_name ${DOMAIN};
     root        ${DOCUMENT_ROOT};
 
-    access_log /home/${USERID}/log/access.log main;
+    access_log /home/${USERID}/log/access.log;
     error_log  /home/${USERID}/log/error.log warn;
 
     location / {
@@ -375,7 +376,7 @@ server {
     server_name  ${DOMAIN};
     root   ${DOCUMENT_ROOT};
 
-    access_log /home/${USERID}/log/access.log main;
+    access_log /home/${USERID}/log/access.log;
     error_log  /home/${USERID}/log/error.log warn;
 
     ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
