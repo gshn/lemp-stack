@@ -32,6 +32,9 @@ vim lemp-stack.sh
 - DBROOTPASS="dbrootpass"
 > 데이터베이스 root 패스워드를 기입합니다.
 
+- PHPVERSION="7.2"
+> PHP 5.6 7.0 7.1 7.2 지원
+
 - PHPMYADMIN_VERSION="4.7.7"
 > https://phpmyadmin.net 에서 가장 최신버전을 확인 후 변경해주세요.
 
