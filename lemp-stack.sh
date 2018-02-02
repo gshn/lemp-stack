@@ -62,9 +62,9 @@ service nginx restart
 ## php 설치
 ## libargon2-0 libsodium23 php-common php7.2-cli php7.2-common php7.2-json php7.2-opcache php7.2-readline
 
-apt-get -y install php$PHPVERSION-fpm php$PHPVERSION-intl php$PHPVERSION-gd php$PHPVERSION-curl php$PHPVERSION-mbstring php$PHPVERSION-xml
+apt-get -y install php$PHPVERSION-fpm php$PHPVERSION-intl php$PHPVERSION-gd php$PHPVERSION-curl php$PHPVERSION-mbstring php$PHPVERSION-xml php$PHPVERSION-zip
 sed -i 's/;emergency_restart_threshold = 0/emergency_restart_threshold = 10/' /etc/php/$PHPVERSION/fpm/php-fpm.conf
-sed -i 's/;emergency_restart_interval = 0/emergency_restart_interval = 1m/' /etc/php/$PHPVERSIONfpm/php-fpm.conf
+sed -i 's/;emergency_restart_interval = 0/emergency_restart_interval = 1m/' /etc/php/$PHPVERSION/fpm/php-fpm.conf
 service php$PHPVERSION-fpm restart
 
 ## mariadb 설치
