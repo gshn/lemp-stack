@@ -15,11 +15,13 @@
 ## 설치법
 
 ### 1. git clone으로 소스 다운로드
+
 ```bash
 git clone https://github.com/gshn/lemp-stack
 ```
 
 ### 2. 환경변수 설정
+
 ```bash
 cd lemp-stack
 locale-gen ko_KR.UTF-8
@@ -35,7 +37,7 @@ vim lemp-stack.sh
 - PHPVERSION="7.2"
 > PHP 5.6 7.0 7.1 7.2 지원
 
-- PHPMYADMIN_VERSION="4.7.7"
+- PHPMYADMIN_VERSION="4.7.9"
 > https://phpmyadmin.net 에서 가장 최신버전을 확인 후 변경해주세요.
 
 - PHPMYADMIN_BLOWFISH=")Aje8s~9VE|JyV8s7MF0Zw|DReayVcpU^"
@@ -57,7 +59,12 @@ vim lemp-stack.sh
 > 보안 인증서에 이용할 이메일 주소를 입력해주세요.
 
 ### 3. 실행권한 변경 및 실행
+
 ```bash
 chmod 700 lemp-stack.sh
 ./lemp-stack.sh
 ```
+
+## Ubuntu LEMP-Stack 설치 스크립트 설명
+
+[Ubuntu LEMP-stack 설치 스크립트 설명](https://github.com/gshn/lemp-stack/ubuntu.md)
