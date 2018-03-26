@@ -67,4 +67,4 @@ chmod 700 lemp-stack.sh
 
 ## Ubuntu LEMP-Stack 설치 스크립트 설명
 
-[Ubuntu LEMP-stack 설치 스크립트 설명](https://github.com/gshn/lemp-stack/ubuntu.md)
+[Ubuntu LEMP-stack 설치 스크립트 설명](https://github.com/gshn/lemp-stack/blob/master/lemp-stack.sh)
